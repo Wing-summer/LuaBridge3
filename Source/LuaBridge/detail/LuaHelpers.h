@@ -115,7 +115,7 @@ inline void luaL_unref(lua_State* L, int idx, int ref)
 template <class T>
 inline void* lua_newuserdata_x(lua_State* L, size_t sz)
 {
-    return lua_newuserdatadtor(L, sz, [](void* x)
+    return lua_newuserdatadtor(L, sz, [](lua_State* ,void* x)
     {
         T* object = static_cast<T*>(x);
         object->~T();
@@ -545,7 +545,7 @@ void* lua_newuserdata_aligned(lua_State* L, Args&&... args)
     using U = std::remove_reference_t<T>;
 
 #if LUABRIDGE_ON_LUAU
-    void* pointer = lua_newuserdatadtor(L, maximum_space_needed_to_align<U>(), [](void* x)
+    void* pointer = lua_newuserdatadtor(L, maximum_space_needed_to_align<U>(), [](lua_State* ,void* x)
     {
         U* aligned = align<U>(x);
         aligned->~U();
